@@ -122,8 +122,8 @@ typedef enum yp_pack_result {
 //   Consult Ruby documentation for the meaning of directives.
 YP_EXPORTED_FUNCTION extern yp_pack_result
 yp_pack_parse(
-    __attribute__((unused)) yp_pack_version version,
-    yp_pack_variant variant,
+    YP_ATTRIBUTE_UNUSED yp_pack_version version,
+    yp_pack_variant variant_arg,
     const char **format,
     const char *format_end,
     yp_pack_type *type,

@@ -6,7 +6,7 @@
 static uintmax_t
 strtoumaxc(const char **format);
 
-YP_EXPORTED_FUNCTION extern yp_pack_result
+YP_IMPORTED_FUNCTION extern yp_pack_result
 yp_pack_parse(YP_ATTRIBUTE_UNUSED yp_pack_version version, yp_pack_variant variant, const char **format, const char *format_end,
                             yp_pack_type *type, yp_pack_signed *signed_type, yp_pack_endian *endian, yp_pack_size *size,
                             yp_pack_length_type *length_type, uint64_t *length, yp_pack_encoding *encoding) {

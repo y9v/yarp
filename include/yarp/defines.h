@@ -9,9 +9,17 @@
 #define _XOPEN_SOURCE 700
 #endif
 
+#ifndef YP_IMPORTED_FUNCTION
+#if defined(_WIN32)
+# define YP_IMPORTED_FUNCTION __declspec(dllimport)
+#else
+# define YP_IMPORTED_FUNCTION __attribute__((__visibility__("default")))
+#endif
+#endif
+
 #ifndef YP_EXPORTED_FUNCTION
 #if defined(_WIN32)
-# define YP_EXPORTED_FUNCTION __declspec(dllimport)
+# define YP_EXPORTED_FUNCTION __declspec(dllexport)
 #else
 # define YP_EXPORTED_FUNCTION __attribute__((__visibility__("default")))
 #endif

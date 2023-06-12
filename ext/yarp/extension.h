@@ -23,6 +23,6 @@ VALUE yp_compile(yp_node_t *node);
 
 void Init_yarp_pack(void);
 
-YP_EXPORTED_FUNCTION void Init_yarp(void);
+YP_IMPORTED_FUNCTION void Init_yarp(void);
 
 #endif // YARP_EXT_NODE_H

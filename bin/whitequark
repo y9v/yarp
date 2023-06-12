@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$:.unshift(File.expand_path("../lib", __dir__))
+require "yarp"
+require "yarp/whitequark"
+require "parser/current"
+
+if ARGV[0].nil?
+  Dir[File.expand_path("../test/fixtures/whitequark/**/*.txt", __dir__)].each do |filepath|
+    source = File.read(filepath)
+
+    parser = ::Parser::CurrentRuby.default_parser
+    parser.diagnostics.consumer = ->(*) {}
+
+    buffer = ::Parser::Source::Buffer.new(filepath, 1)
+    buffer.source = source
+
+    expected = parser.parse(buffer)
+    next if expected.nil?
+
+    actual = YARP.parse(source).value.accept(YARP::Whitequark.new(buffer))
+    print expected == actual ? "." : "E"
+  rescue ::Parser::SyntaxError
+    # ignore
+  end
+
+  puts
+else
+  source = ARGV[0] == "-e" ? ARGV[1] : File.read(ARGV[0])
+  pp YARP.parse(source).value.accept(YARP::Whitequark.new(source))
+end

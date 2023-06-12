@@ -55,7 +55,7 @@ YP_EXPORTED_FUNCTION extern void yp_parser_free(yp_parser_t *parser);
 YP_EXPORTED_FUNCTION extern yp_node_t * yp_parse(yp_parser_t *parser);
 
 // Deallocate a node and all of its children.
-YP_EXPORTED_FUNCTION extern void yp_node_destroy(yp_parser_t *parser, struct yp_node *node);
+void yp_node_destroy(yp_parser_t *parser, struct yp_node *node);
 
 // This struct stores the information gathered by the yp_node_memsize function.
 // It contains both the memory footprint and additionally metadata about the

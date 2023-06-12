@@ -453,7 +453,7 @@ exit_modifier_loop:
     return YP_PACK_OK;
 }
 
-YP_EXPORTED_FUNCTION extern size_t
+size_t
 yp_size_to_native(yp_pack_size size) {
     switch (size) {
         case YP_PACK_SIZE_SHORT:

@@ -55,7 +55,7 @@ YP_EXPORTED_FUNCTION extern void yp_parser_free(yp_parser_t *parser);
 YP_EXPORTED_FUNCTION extern yp_node_t * yp_parse(yp_parser_t *parser);
 
 // Deallocate a node and all of its children.
-void yp_node_destroy(yp_parser_t *parser, struct yp_node *node);
+extern void yp_node_destroy(yp_parser_t *parser, struct yp_node *node);
 
 // This struct stores the information gathered by the yp_node_memsize function.
 // It contains both the memory footprint and additionally metadata about the
@@ -66,7 +66,7 @@ typedef struct {
 } yp_memsize_t;
 
 // Calculates the memory footprint of a given node.
-void yp_node_memsize(yp_node_t *node, yp_memsize_t *memsize);
+YP_EXPORTED_FUNCTION extern void yp_node_memsize(yp_node_t *node, yp_memsize_t *memsize);
 
 // Pretty-prints the AST represented by the given node to the given buffer.
 YP_EXPORTED_FUNCTION extern void yp_prettyprint(yp_parser_t *parser, yp_node_t *node, yp_buffer_t *buffer);

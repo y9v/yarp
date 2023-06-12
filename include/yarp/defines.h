@@ -11,7 +11,7 @@
 
 #ifndef YP_EXPORTED_FUNCTION
 #if defined(_WIN32)
-# define YP_EXPORTED_FUNCTION
+# define YP_EXPORTED_FUNCTION __declspec(dllimport)
 #else
 # define YP_EXPORTED_FUNCTION __attribute__((__visibility__("default")))
 #endif

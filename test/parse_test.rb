@@ -87,6 +87,8 @@ class ParseTest < Test::Unit::TestCase
         warn("Created snapshot at #{snapshot}.")
       end
 
+      assert_non_overlapping_locations value
+
       # Next, assert that the value can be serialized and deserialized without
       # changing the shape of the tree.
       assert_equal_nodes(value, YARP.load(source, YARP.dump(source, filepath)))
@@ -107,6 +109,28 @@ class ParseTest < Test::Unit::TestCase
       rescue SyntaxError
         raise ArgumentError, "Test file has invalid syntax #{filepath}"
       end
+    end
+  end
+
+  private
+
+  def assert_non_overlapping_locations(node)
+    nodes = node.child_nodes
+    until nodes.empty?
+      current = nodes.shift
+      current_location = current.location
+      current.child_nodes.each do |child|
+        if child && !child.is_a?(YARP::InterpolatedStringNode)
+          nodes << child
+          child_location = child.location
+          if current_location.start_offset > child_location.start_offset || current_location.end_offset < child_location.end_offset
+            pp current_location, child_location
+          end
+          assert_operator current_location.start_offset, :<=, child_location.start_offset
+          assert_operator current_location.end_offset, :>=, child_location.end_offset
+        end
+      end
+
     end
   end
 end

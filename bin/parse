@@ -8,8 +8,28 @@
 $:.unshift(File.expand_path("../lib", __dir__))
 require "yarp"
 
+def assert_non_overlapping_locations(node)
+  nodes = node.child_nodes
+  until nodes.empty?
+    current = nodes.shift
+    current_location = current.location
+    current.child_nodes.each do |child|
+      if child && !child.is_a?(YARP::InterpolatedStringNode)
+        nodes << child
+        child_location = child.location
+        if current_location.start_offset > child_location.start_offset || current_location.end_offset < child_location.end_offset
+          pp child
+          pp current
+          binding.irb
+        end
+      end
+    end
+  end
+end
 if ARGV[0] == "-e"
   pp YARP.parse(ARGV[1])
 else
-  pp YARP.parse_file(ARGV[0])
+  res = YARP.parse_file(ARGV[0])
+  assert_non_overlapping_locations(res.value)
 end
+

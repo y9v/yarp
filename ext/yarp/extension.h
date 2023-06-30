@@ -15,7 +15,7 @@
 #include <unistd.h>
 #endif
 
-#define EXPECTED_YARP_VERSION "0.4.0"
+#define EXPECTED_YARP_VERSION "0.5.0"
 
 VALUE yp_source_new(yp_parser_t *parser);
 VALUE yp_token_new(yp_parser_t *parser, yp_token_t *token, rb_encoding *encoding, VALUE source);

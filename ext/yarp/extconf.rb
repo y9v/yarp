@@ -19,12 +19,12 @@ module Yarp
       end
 
       def configure_rubyparser
-        find_header("yarp.h", include_dir)
+        find_header("yarp.h", include_dir) or raise "yarp.h is required"
 
         # Explicitly look for the extension header in the parent directory
         # because we want to consistently look for yarp/extension.h in our
         # source files to line up with our mirroring in CRuby.
-        find_header("yarp/extension.h", File.join(__dir__, ".."))
+        find_header("yarp/extension.h", File.join(__dir__, "..")) or raise "yarp/extension.h is required"
 
         if static_link?
           static_archive_path = File.join(build_dir, "librubyparser.a")

@@ -227,4 +227,84 @@ require_relative "yarp/node"
 require_relative "yarp/ripper_compat"
 require_relative "yarp/serialize"
 require_relative "yarp/pack"
-require "yarp.so"
+
+if RUBY_ENGINE == 'ruby' and false # TODO
+  require "yarp.so"
+else
+  require "yarp.so" # TODO HACK until all methods implemented
+
+  require "fiddle"
+  require "fiddle/import"
+
+  module YARP
+    module LibRubyParser
+      extend Fiddle::Importer
+
+      POINTER_SIZE = sizeof("void*")
+
+      Buffer = struct ['char *value', 'size_t length', 'size_t capacity']
+
+      dlload File.expand_path("../build/librubyparser.so", __dir__)
+
+      typealias 'bool', 'char' # OK? https://github.com/ruby/fiddle/issues/130
+
+      typealias 'yp_unescape_type_t', 'int'
+      YP_UNESCAPE_NONE = 0
+      YP_UNESCAPE_MINIMAL = 1
+      YP_UNESCAPE_ALL = 2
+
+      def self.load_expored_functions_from(header, excludes = [])
+        File.readlines(File.expand_path("../include/#{header}", __dir__)).each do |line|
+          if line.start_with?('YP_EXPORTED_FUNCTION ')
+            line = line.delete_prefix('YP_EXPORTED_FUNCTION ')
+            unless excludes.any? { |exclude| exclude =~ line }
+              extern line
+            end
+          end
+        end
+      end
+
+      load_expored_functions_from("yarp.h", [/callback/, /yp_token_type_to_str/])
+      load_expored_functions_from("yarp/util/yp_buffer.h")
+      load_expored_functions_from("yarp/unescape.h")
+
+      # extern "const char* yp_version(void)"
+      # extern "void yp_parser_init(yp_parser_t *parser, const char *source, size_t size, const char *filepath)"
+      # extern "void yp_parse_serialize(const char *source, size_t size, yp_buffer_t *buffer)"
+
+      # extern "bool yp_buffer_init(yp_buffer_t *buffer)"
+      # extern "void yp_buffer_free(yp_buffer_t *buffer)"
+
+    end
+
+
+    VERSION = LibRubyParser.yp_version.to_s
+
+    def self.dump(code, filepath = nil)
+      buffer = LibRubyParser::Buffer.malloc
+      raise unless LibRubyParser.yp_buffer_init(buffer) == 1
+      LibRubyParser.yp_parse_serialize(code, code.bytesize, buffer)
+      buffer.value.to_s(buffer.length)
+    end
+
+    def self.dump_file(filepath)
+      code = File.binread(filepath)
+      dump(code, filepath)
+    end
+
+    def self.parse(code, filepath = nil)
+      serialized = dump(code, filepath)
+      node = load(code, serialized)
+      ParseResult.new(node, [], [], [])
+    end
+
+    # def self.unescape(source, type)
+    #
+    # end
+    # private_class_method :unescape
+    #
+    # def self.unescape_none(source)
+    #   unescape(source, LibRubyParser::YP_UNESCAPE_MINIMAL)
+    # end
+  end
+end
